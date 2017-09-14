@@ -1,37 +1,37 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2014 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package miner implements Ethereum block creation and mining.
+// Package miner implements PHPChain block creation and mining.
 package miner
 
 import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/phpchain/go-phpchain/accounts"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/consensus"
+	"github.com/phpchain/go-phpchain/core"
+	"github.com/phpchain/go-phpchain/core/state"
+	"github.com/phpchain/go-phpchain/core/types"
+	"github.com/phpchain/go-phpchain/eth/downloader"
+	"github.com/phpchain/go-phpchain/ethdb"
+	"github.com/phpchain/go-phpchain/event"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/params"
 )
 
 // Backend wraps all methods required for mining.
@@ -105,7 +105,7 @@ out:
 
 func (self *Miner) Start(coinbase common.Address) {
 	atomic.StoreInt32(&self.shouldStart, 1)
-	self.worker.setEtherbase(coinbase)
+	self.worker.setPHPbase(coinbase)
 	self.coinbase = coinbase
 
 	if atomic.LoadInt32(&self.canStart) == 0 {
@@ -177,7 +177,7 @@ func (self *Miner) PendingBlock() *types.Block {
 	return self.worker.pendingBlock()
 }
 
-func (self *Miner) SetEtherbase(addr common.Address) {
+func (self *Miner) SetPHPbase(addr common.Address) {
 	self.coinbase = addr
-	self.worker.setEtherbase(addr)
+	self.worker.setPHPbase(addr)
 }

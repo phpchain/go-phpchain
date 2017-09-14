@@ -1,20 +1,20 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of go-ethereum.
+// Copyright 2017 The go-phpchain Authors
+// This file is part of go-phpchain.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-phpchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-phpchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-phpchain. If not, see <http://www.gnu.org/licenses/>.
 
-// faucet is a Ether faucet backed by a light client.
+// faucet is a PHP faucet backed by a light client.
 package main
 
 //go:generate go-bindata -nometadata -o website.go faucet.html
@@ -38,36 +38,36 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/ethstats"
-	"github.com/ethereum/go-ethereum/les"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discover"
-	"github.com/ethereum/go-ethereum/p2p/discv5"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/phpchain/go-phpchain/accounts"
+	"github.com/phpchain/go-phpchain/accounts/keystore"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/core"
+	"github.com/phpchain/go-phpchain/core/types"
+	"github.com/phpchain/go-phpchain/eth"
+	"github.com/phpchain/go-phpchain/eth/downloader"
+	"github.com/phpchain/go-phpchain/ethclient"
+	"github.com/phpchain/go-phpchain/ethstats"
+	"github.com/phpchain/go-phpchain/les"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/node"
+	"github.com/phpchain/go-phpchain/p2p"
+	"github.com/phpchain/go-phpchain/p2p/discover"
+	"github.com/phpchain/go-phpchain/p2p/discv5"
+	"github.com/phpchain/go-phpchain/p2p/nat"
+	"github.com/phpchain/go-phpchain/params"
 	"golang.org/x/net/websocket"
 )
 
 var (
 	genesisFlag = flag.String("genesis", "", "Genesis json file to seed the chain with")
 	apiPortFlag = flag.Int("apiport", 8080, "Listener port for the HTTP API connection")
-	ethPortFlag = flag.Int("ethport", 30303, "Listener port for the devp2p connection")
+	ethPortFlag = flag.Int("ethport", 39595, "Listener port for the devp2p connection")
 	bootFlag    = flag.String("bootnodes", "", "Comma separated bootnode enode URLs to seed with")
-	netFlag     = flag.Uint64("network", 0, "Network ID to use for the Ethereum protocol")
+	netFlag     = flag.Uint64("network", 0, "Network ID to use for the PHPChain protocol")
 	statsFlag   = flag.String("ethstats", "", "Ethstats network monitoring auth string")
 
 	netnameFlag = flag.String("faucet.name", "", "Network name to assign to the faucet")
-	payoutFlag  = flag.Int("faucet.amount", 1, "Number of Ethers to pay out per user request")
+	payoutFlag  = flag.Int("faucet.amount", 1, "Number of PHPs to pay out per user request")
 	minutesFlag = flag.Int("faucet.minutes", 1440, "Number of minutes to wait between funding rounds")
 	tiersFlag   = flag.Int("faucet.tiers", 3, "Number of funding tiers to enable (x3 time, x2.5 funds)")
 
@@ -80,11 +80,11 @@ var (
 	captchaToken  = flag.String("captcha.token", "", "Recaptcha site key to authenticate client side")
 	captchaSecret = flag.String("captcha.secret", "", "Recaptcha secret key to authenticate server side")
 
-	logFlag = flag.Int("loglevel", 3, "Log level to use for Ethereum and the faucet")
+	logFlag = flag.Int("loglevel", 3, "Log level to use for PHPChain and the faucet")
 )
 
 var (
-	ether = new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+	php = new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
 )
 
 func main() {
@@ -98,7 +98,7 @@ func main() {
 	for i := 0; i < *tiersFlag; i++ {
 		// Calculate the amount for the next tier and format it
 		amount := float64(*payoutFlag) * math.Pow(2.5, float64(i))
-		amounts[i] = fmt.Sprintf("%s Ethers", strconv.FormatFloat(amount, 'f', -1, 64))
+		amounts[i] = fmt.Sprintf("%s PHPs", strconv.FormatFloat(amount, 'f', -1, 64))
 		if amount == 1 {
 			amounts[i] = strings.TrimSuffix(amounts[i], "s")
 		}
@@ -182,16 +182,16 @@ func main() {
 // request represents an accepted funding request.
 type request struct {
 	Username string             `json:"username"` // GitHub user for displaying an avatar
-	Account  common.Address     `json:"account"`  // Ethereum address being funded
+	Account  common.Address     `json:"account"`  // PHPChain address being funded
 	Time     time.Time          `json:"time"`     // Timestamp when te request was accepted
 	Tx       *types.Transaction `json:"tx"`       // Transaction funding the account
 }
 
-// faucet represents a crypto faucet backed by an Ethereum light client.
+// faucet represents a crypto faucet backed by an PHPChain light client.
 type faucet struct {
 	config *params.ChainConfig // Chain configurations for signing
-	stack  *node.Node          // Ethereum protocol stack
-	client *ethclient.Client   // Client connection to the Ethereum chain
+	stack  *node.Node          // PHPChain protocol stack
+	client *ethclient.Client   // Client connection to the PHPChain chain
 	index  []byte              // Index page to serve up on the web
 
 	keystore *keystore.KeyStore // Keystore containing the single signer
@@ -226,7 +226,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	if err != nil {
 		return nil, err
 	}
-	// Assemble the Ethereum light client protocol
+	// Assemble the PHPChain light client protocol
 	if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
 		cfg := eth.DefaultConfig
 		cfg.SyncMode = downloader.LightSync
@@ -239,7 +239,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	// Assemble the ethstats monitoring and reporting service'
 	if stats != "" {
 		if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
-			var serv *les.LightEthereum
+			var serv *les.LightPHPChain
 			ctx.Service(&serv)
 			return ethstats.New(stats, nil, serv)
 		}); err != nil {
@@ -274,7 +274,7 @@ func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network u
 	}, nil
 }
 
-// close terminates the Ethereum connection and tears down the faucet.
+// close terminates the PHPChain connection and tears down the faucet.
 func (f *faucet) close() error {
 	return f.stack.Stop()
 }
@@ -296,7 +296,7 @@ func (f *faucet) webHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(f.index)
 }
 
-// apiHandler handles requests for Ether grants and transaction statuses.
+// apiHandler handles requests for php grants and transaction statuses.
 func (f *faucet) apiHandler(conn *websocket.Conn) {
 	// Start tracking the connection and drop at the end
 	f.lock.Lock()
@@ -318,7 +318,7 @@ func (f *faucet) apiHandler(conn *websocket.Conn) {
 	nonce, _ := f.client.NonceAt(context.Background(), f.account.Address, nil)
 
 	websocket.JSON.Send(conn, map[string]interface{}{
-		"funds":    balance.Div(balance, ether),
+		"funds":    balance.Div(balance, php),
 		"funded":   nonce,
 		"peers":    f.stack.Server().PeerCount(),
 		"requests": f.reqs,
@@ -410,7 +410,7 @@ func (f *faucet) apiHandler(conn *websocket.Conn) {
 			websocket.JSON.Send(conn, map[string]string{"error": "Anonymous Gists not allowed"})
 			continue
 		}
-		// Iterate over all the files and look for Ethereum addresses
+		// Iterate over all the files and look for PHPChain addresses
 		var address common.Address
 		for _, file := range gist.Files {
 			if len(file.Content) == 2+common.AddressLength*2 {
@@ -418,7 +418,7 @@ func (f *faucet) apiHandler(conn *websocket.Conn) {
 			}
 		}
 		if address == (common.Address{}) {
-			websocket.JSON.Send(conn, map[string]string{"error": "No Ethereum address found to fund"})
+			websocket.JSON.Send(conn, map[string]string{"error": "No PHPChain address found to fund"})
 			continue
 		}
 		// Validate the user's existence since the API is unhelpful here
@@ -440,7 +440,7 @@ func (f *faucet) apiHandler(conn *websocket.Conn) {
 		)
 		if timeout = f.timeouts[gist.Owner.Login]; time.Now().After(timeout) {
 			// User wasn't funded recently, create the funding transaction
-			amount := new(big.Int).Mul(big.NewInt(int64(*payoutFlag)), ether)
+			amount := new(big.Int).Mul(big.NewInt(int64(*payoutFlag)), php)
 			amount = new(big.Int).Mul(amount, new(big.Int).Exp(big.NewInt(5), big.NewInt(int64(msg.Tier)), nil))
 			amount = new(big.Int).Div(amount, new(big.Int).Exp(big.NewInt(2), big.NewInt(int64(msg.Tier)), nil))
 
@@ -497,7 +497,7 @@ func (f *faucet) loop() {
 		case head := <-heads:
 			// New chain head arrived, query the current stats and stream to clients
 			balance, _ := f.client.BalanceAt(context.Background(), f.account.Address, nil)
-			balance = new(big.Int).Div(balance, ether)
+			balance = new(big.Int).Div(balance, php)
 
 			price, _ := f.client.SuggestGasPrice(context.Background())
 			nonce, _ := f.client.NonceAt(context.Background(), f.account.Address, nil)

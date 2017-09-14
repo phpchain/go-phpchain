@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 // Package ethstats implements the network stats reporting service.
 package ethstats
@@ -30,18 +30,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/mclock"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/les"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/common/mclock"
+	"github.com/phpchain/go-phpchain/consensus"
+	"github.com/phpchain/go-phpchain/core"
+	"github.com/phpchain/go-phpchain/core/types"
+	"github.com/phpchain/go-phpchain/eth"
+	"github.com/phpchain/go-phpchain/event"
+	"github.com/phpchain/go-phpchain/les"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/node"
+	"github.com/phpchain/go-phpchain/p2p"
+	"github.com/phpchain/go-phpchain/rpc"
 	"golang.org/x/net/websocket"
 )
 
@@ -49,14 +49,14 @@ import (
 // history request.
 const historyUpdateRange = 50
 
-// Service implements an Ethereum netstats reporting daemon that pushes local
+// Service implements an PHPChain netstats reporting daemon that pushes local
 // chain statistics up to a monitoring server.
 type Service struct {
 	stack *node.Node // Temporary workaround, remove when API finalized
 
 	server *p2p.Server        // Peer-to-peer server to retrieve networking infos
-	eth    *eth.Ethereum      // Full Ethereum service if monitoring a full node
-	les    *les.LightEthereum // Light Ethereum service if monitoring a light node
+	eth    *eth.PHPChain      // Full PHPChain service if monitoring a full node
+	les    *les.LightPHPChain // Light PHPChain service if monitoring a light node
 	engine consensus.Engine   // Consensus engine to retrieve variadic block fields
 
 	node string // Name of the node to display on the monitoring page
@@ -68,7 +68,7 @@ type Service struct {
 }
 
 // New returns a monitoring service ready for stats reporting.
-func New(url string, ethServ *eth.Ethereum, lesServ *les.LightEthereum) (*Service, error) {
+func New(url string, ethServ *eth.PHPChain, lesServ *les.LightPHPChain) (*Service, error) {
 	// Parse the netstats connection url
 	re := regexp.MustCompile("([^:@]*)(:([^@]*))?@(.+)")
 	parts := re.FindStringSubmatch(url)

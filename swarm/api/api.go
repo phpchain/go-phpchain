@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 package api
 
@@ -29,9 +29,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/swarm/storage"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/swarm/storage"
 )
 
 var (
@@ -47,7 +47,7 @@ type Resolver interface {
 /*
 Api implements webserver/file system related content storage and retrieval
 on top of the dpa
-it is the public interface of the dpa which is included in the ethereum stack
+it is the public interface of the dpa which is included in the phpchain stack
 */
 type Api struct {
 	dpa *storage.DPA

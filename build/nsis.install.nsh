@@ -3,9 +3,9 @@ InstallDir "$InstDir"
 OutFile "${OUTPUTFILE}" # set through command line arguments
 
 # Links for "Add/Remove Programs"
-!define HELPURL "https://github.com/ethereum/go-ethereum/issues"
-!define UPDATEURL "https://github.com/ethereum/go-ethereum/releases"
-!define ABOUTURL "https://github.com/ethereum/go-ethereum#ethereum-go"
+!define HELPURL "https://github.com/phpchain/go-phpchain/issues"
+!define UPDATEURL "https://github.com/phpchain/go-phpchain/releases"
+!define ABOUTURL "https://github.com/phpchain/go-phpchain#phpchain-go"
 !define /date NOW "%Y%m%d"
 
 PageEx license
@@ -24,18 +24,18 @@ Section "Geth" GETH_IDX
   createShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "" ""
 
   # Firewall - remove rules (if exists)
-  SimpleFC::AdvRemoveRule "Geth incoming peers (TCP:30303)"
-  SimpleFC::AdvRemoveRule "Geth outgoing peers (TCP:30303)"
-  SimpleFC::AdvRemoveRule "Geth UDP discovery (UDP:30303)"
+  SimpleFC::AdvRemoveRule "Geth incoming peers (TCP:39595)"
+  SimpleFC::AdvRemoveRule "Geth outgoing peers (TCP:39595)"
+  SimpleFC::AdvRemoveRule "Geth UDP discovery (UDP:39595)"
 
   # Firewall - add rules
-  SimpleFC::AdvAddRule "Geth incoming peers (TCP:30303)" ""  6 1 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Ethereum" 30303 "" "" ""
-  SimpleFC::AdvAddRule "Geth outgoing peers (TCP:30303)" ""  6 2 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Ethereum" "" 30303 "" ""
-  SimpleFC::AdvAddRule "Geth UDP discovery (UDP:30303)" "" 17 2 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "Ethereum" "" 30303 "" ""
+  SimpleFC::AdvAddRule "Geth incoming peers (TCP:39595)" ""  6 1 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "PHPChain" 39595 "" "" ""
+  SimpleFC::AdvAddRule "Geth outgoing peers (TCP:39595)" ""  6 2 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "PHPChain" "" 39595 "" ""
+  SimpleFC::AdvAddRule "Geth UDP discovery (UDP:39595)" "" 17 2 1 2147483647 1 "$INSTDIR\geth.exe" "" "" "PHPChain" "" 39595 "" ""
 
-  # Set default IPC endpoint (https://github.com/ethereum/EIPs/issues/147)
-  ${EnvVarUpdate} $0 "ETHEREUM_SOCKET" "R" "HKLM" "\\.\pipe\geth.ipc"
-  ${EnvVarUpdate} $0 "ETHEREUM_SOCKET" "A" "HKLM" "\\.\pipe\geth.ipc"
+  # Set default IPC endpoint (https://github.com/phpchain/EIPs/issues/147)
+  ${EnvVarUpdate} $0 "PHPCHAIN_SOCKET" "R" "HKLM" "\\.\pipe\geth.ipc"
+  ${EnvVarUpdate} $0 "PHPCHAIN_SOCKET" "A" "HKLM" "\\.\pipe\geth.ipc"
 
   # Add instdir to PATH
   Push "$INSTDIR"

@@ -1,20 +1,20 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package les implements the Light Ethereum Subprotocol.
+// Package les implements the Light PHPChain Subprotocol.
 package les
 
 import (
@@ -23,18 +23,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/les/flowcontrol"
-	"github.com/ethereum/go-ethereum/light"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discv5"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/trie"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/core"
+	"github.com/phpchain/go-phpchain/core/types"
+	"github.com/phpchain/go-phpchain/eth"
+	"github.com/phpchain/go-phpchain/ethdb"
+	"github.com/phpchain/go-phpchain/les/flowcontrol"
+	"github.com/phpchain/go-phpchain/light"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/p2p"
+	"github.com/phpchain/go-phpchain/p2p/discv5"
+	"github.com/phpchain/go-phpchain/rlp"
+	"github.com/phpchain/go-phpchain/trie"
 )
 
 type LesServer struct {
@@ -47,7 +47,7 @@ type LesServer struct {
 	stopped         bool
 }
 
-func NewLesServer(eth *eth.Ethereum, config *eth.Config) (*LesServer, error) {
+func NewLesServer(eth *eth.PHPChain, config *eth.Config) (*LesServer, error) {
 	quitSync := make(chan struct{})
 	pm, err := NewProtocolManager(eth.BlockChain().Config(), false, config.NetworkId, eth.EventMux(), eth.Engine(), newPeerSet(), eth.BlockChain(), eth.TxPool(), eth.ChainDb(), nil, nil, quitSync, new(sync.WaitGroup))
 	if err != nil {

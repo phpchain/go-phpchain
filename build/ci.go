@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 // +build none
 
@@ -57,7 +57,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/internal/build"
+	"github.com/phpchain/go-phpchain/internal/build"
 )
 
 var (
@@ -84,23 +84,23 @@ var (
 	debExecutables = []debExecutable{
 		{
 			Name:        "abigen",
-			Description: "Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages.",
+			Description: "Source code generator to convert PHPChain contract definitions into easy to use, compile-time type-safe Go packages.",
 		},
 		{
 			Name:        "bootnode",
-			Description: "Ethereum bootnode.",
+			Description: "PHPChain bootnode.",
 		},
 		{
 			Name:        "evm",
-			Description: "Developer utility version of the EVM (Ethereum Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
+			Description: "Developer utility version of the EVM (PHPChain Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
 		},
 		{
 			Name:        "geth",
-			Description: "Ethereum CLI client.",
+			Description: "PHPChain CLI client.",
 		},
 		{
 			Name:        "puppeth",
-			Description: "Ethereum private network manager.",
+			Description: "PHPChain private network manager.",
 		},
 		{
 			Name:        "rlpdump",
@@ -108,11 +108,11 @@ var (
 		},
 		{
 			Name:        "swarm",
-			Description: "Ethereum Swarm daemon and tools",
+			Description: "PHPChain Swarm daemon and tools",
 		},
 		{
 			Name:        "wnode",
-			Description: "Ethereum Whisper diagnostic tool",
+			Description: "PHPChain Whisper diagnostic tool",
 		},
 	}
 
@@ -177,7 +177,7 @@ func doInstall(cmdline []string) {
 	// failure with outdated Go. This should save them the trouble.
 	if runtime.Version() < "go1.7" && !strings.Contains(runtime.Version(), "devel") {
 		log.Println("You have Go version", runtime.Version())
-		log.Println("go-ethereum requires at least Go version 1.7 and cannot")
+		log.Println("go-phpchain requires at least Go version 1.7 and cannot")
 		log.Println("be compiled with an earlier version. Please upgrade your Go installation.")
 		os.Exit(1)
 	}
@@ -456,7 +456,7 @@ func maybeSkipArchive(env build.Environment) {
 func doDebianSource(cmdline []string) {
 	var (
 		signer  = flag.String("signer", "", `Signing key name, also used as package author`)
-		upload  = flag.String("upload", "", `Where to upload the source package (usually "ppa:ethereum/ethereum")`)
+		upload  = flag.String("upload", "", `Where to upload the source package (usually "ppa:phpchain/phpchain")`)
 		workdir = flag.String("workdir", "", `Output directory for packages (uses temp dir if unset)`)
 		now     = time.Now()
 	)
@@ -518,7 +518,7 @@ func isUnstableBuild(env build.Environment) bool {
 type debMetadata struct {
 	Env build.Environment
 
-	// go-ethereum version being built. Note that this
+	// go-phpchain version being built. Note that this
 	// is not the debian package version. The package version
 	// is constructed by VersionString.
 	Version string
@@ -535,7 +535,7 @@ type debExecutable struct {
 func newDebMetadata(distro, author string, env build.Environment, t time.Time) debMetadata {
 	if author == "" {
 		// No signing key, use default author.
-		author = "Ethereum Builds <fjl@ethereum.org>"
+		author = "PHPChain Builds <fjl@phpchain.org>"
 	}
 	return debMetadata{
 		Env:         env,
@@ -551,9 +551,9 @@ func newDebMetadata(distro, author string, env build.Environment, t time.Time) d
 // on all executable packages.
 func (meta debMetadata) Name() string {
 	if isUnstableBuild(meta.Env) {
-		return "ethereum-unstable"
+		return "phpchain-unstable"
 	}
-	return "ethereum"
+	return "phpchain"
 }
 
 // VersionString returns the debian version of the packages.
@@ -597,7 +597,7 @@ func (meta debMetadata) ExeConflicts(exe debExecutable) string {
 		// be preferred and the conflicting files should be handled via
 		// alternates. We might do this eventually but using a conflict is
 		// easier now.
-		return "ethereum, " + exe.Name
+		return "phpchain, " + exe.Name
 	}
 	return ""
 }
@@ -723,7 +723,7 @@ func doAndroidArchive(cmdline []string) {
 	// Build the Android archive and Maven resources
 	build.MustRun(goTool("get", "golang.org/x/mobile/cmd/gomobile"))
 	build.MustRun(gomobileTool("init", "--ndk", os.Getenv("ANDROID_NDK")))
-	build.MustRun(gomobileTool("bind", "--target", "android", "--javapkg", "org.ethereum", "-v", "github.com/ethereum/go-ethereum/mobile"))
+	build.MustRun(gomobileTool("bind", "--target", "android", "--javapkg", "org.phpchain", "-v", "github.com/phpchain/go-phpchain/mobile"))
 
 	if *local {
 		// If we're building locally, copy bundle to build dir and skip Maven
@@ -843,7 +843,7 @@ func doXCodeFramework(cmdline []string) {
 	// Build the iOS XCode framework
 	build.MustRun(goTool("get", "golang.org/x/mobile/cmd/gomobile"))
 	build.MustRun(gomobileTool("init"))
-	bind := gomobileTool("bind", "--target", "ios", "--tags", "ios", "-v", "github.com/ethereum/go-ethereum/mobile")
+	bind := gomobileTool("bind", "--target", "ios", "--tags", "ios", "-v", "github.com/phpchain/go-phpchain/mobile")
 
 	if *local {
 		// If we're building locally, use the build folder and stop afterwards

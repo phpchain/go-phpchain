@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 package whisperv5
 
@@ -26,11 +26,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/crypto"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/p2p"
+	"github.com/phpchain/go-phpchain/rpc"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/sync/syncmap"
@@ -51,7 +51,7 @@ const (
 	overflowIdx   = iota // Indicator of message queue overflow
 )
 
-// Whisper represents a dark communication interface through the Ethereum
+// Whisper represents a dark communication interface through the PHPChain
 // network, using its very own P2P communication layer.
 type Whisper struct {
 	protocol p2p.Protocol // Protocol description and parameters
@@ -80,7 +80,7 @@ type Whisper struct {
 	mailServer MailServer // MailServer interface
 }
 
-// New creates a Whisper client ready to communicate through the Ethereum P2P network.
+// New creates a Whisper client ready to communicate through the PHPChain P2P network.
 func New(cfg *Config) *Whisper {
 	if cfg == nil {
 		cfg = &DefaultConfig

@@ -5,7 +5,7 @@ package whisperv5
 import (
 	"encoding/json"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/phpchain/go-phpchain/common/hexutil"
 )
 
 func (n NewMessage) MarshalJSON() ([]byte, error) {

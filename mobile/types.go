@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 // Contains all the wrappers from the core/types package.
 
@@ -23,8 +23,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/phpchain/go-phpchain/core/types"
+	"github.com/phpchain/go-phpchain/rlp"
 )
 
 // A Nonce is a 64-bit hash which proves (combined with the mix-hash) that
@@ -58,7 +58,7 @@ func (b *Bloom) GetHex() string {
 	return fmt.Sprintf("0x%x", b.bloom[:])
 }
 
-// Header represents a block header in the Ethereum blockchain.
+// Header represents a block header in the PHPChain blockchain.
 type Header struct {
 	header *types.Header
 }
@@ -135,7 +135,7 @@ func (h *Headers) Get(index int) (header *Header, _ error) {
 	return &Header{h.headers[index]}, nil
 }
 
-// Block represents an entire block in the Ethereum blockchain.
+// Block represents an entire block in the PHPChain blockchain.
 type Block struct {
 	block *types.Block
 }
@@ -205,7 +205,7 @@ func (b *Block) GetTransaction(hash *Hash) *Transaction {
 	return &Transaction{b.block.Transaction(hash.hash)}
 }
 
-// Transaction represents a single Ethereum transaction.
+// Transaction represents a single PHPChain transaction.
 type Transaction struct {
 	tx *types.Transaction
 }

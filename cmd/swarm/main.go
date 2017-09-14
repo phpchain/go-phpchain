@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of go-ethereum.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of go-phpchain.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-phpchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-phpchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-phpchain. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -30,23 +30,23 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/console"
-	"github.com/ethereum/go-ethereum/contracts/ens"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/internal/debug"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discover"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/ethereum/go-ethereum/swarm"
-	bzzapi "github.com/ethereum/go-ethereum/swarm/api"
+	"github.com/phpchain/go-phpchain/accounts"
+	"github.com/phpchain/go-phpchain/accounts/keystore"
+	"github.com/phpchain/go-phpchain/cmd/utils"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/console"
+	"github.com/phpchain/go-phpchain/contracts/ens"
+	"github.com/phpchain/go-phpchain/crypto"
+	"github.com/phpchain/go-phpchain/ethclient"
+	"github.com/phpchain/go-phpchain/internal/debug"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/node"
+	"github.com/phpchain/go-phpchain/p2p"
+	"github.com/phpchain/go-phpchain/p2p/discover"
+	"github.com/phpchain/go-phpchain/params"
+	"github.com/phpchain/go-phpchain/rpc"
+	"github.com/phpchain/go-phpchain/swarm"
+	bzzapi "github.com/phpchain/go-phpchain/swarm/api"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -94,7 +94,7 @@ var (
 	}
 	SwarmSwapAPIFlag = cli.StringFlag{
 		Name:  "swap-api",
-		Usage: "URL of the Ethereum API provider to use to settle SWAP payments",
+		Usage: "URL of the PHPChain API provider to use to settle SWAP payments",
 	}
 	SwarmSyncEnabledFlag = cli.BoolTFlag{
 		Name:  "sync",
@@ -102,7 +102,7 @@ var (
 	}
 	EnsAPIFlag = cli.StringFlag{
 		Name:  "ens-api",
-		Usage: "URL of the Ethereum API provider to use for ENS record lookups",
+		Usage: "URL of the PHPChain API provider to use for ENS record lookups",
 		Value: node.DefaultIPCEndpoint("geth"),
 	}
 	EnsAddrFlag = cli.StringFlag{
@@ -158,13 +158,13 @@ func init() {
 	utils.ListenPortFlag.Value = 30399
 }
 
-var app = utils.NewApp(gitCommit, "Ethereum Swarm")
+var app = utils.NewApp(gitCommit, "PHPChain Swarm")
 
 // This init function creates the cli.App.
 func init() {
 	app.Action = bzzd
 	app.HideVersion = true // we have a command to print the version
-	app.Copyright = "Copyright 2013-2016 The go-ethereum Authors"
+	app.Copyright = "Copyright 2013-2016 The go-phpchain Authors"
 	app.Commands = []cli.Command{
 		{
 			Action:    version,

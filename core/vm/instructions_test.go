@@ -5,8 +5,8 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/params"
 )
 
 func TestByteOp(t *testing.T) {

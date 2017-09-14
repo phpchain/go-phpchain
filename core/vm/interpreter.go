@@ -1,18 +1,18 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2014 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 package vm
 
@@ -21,11 +21,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/common/math"
+	"github.com/phpchain/go-phpchain/crypto"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/params"
 )
 
 // Config are the configuration options for the Interpreter
@@ -51,7 +51,7 @@ type Config struct {
 	JumpTable [256]operation
 }
 
-// Interpreter is used to run Ethereum based contracts and will utilise the
+// Interpreter is used to run PHPChain based contracts and will utilise the
 // passed evmironment to query external sources for state information.
 // The Interpreter will run the byte code VM or JIT VM based on the passed
 // configuration.

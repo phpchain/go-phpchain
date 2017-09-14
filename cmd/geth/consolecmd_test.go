@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of go-ethereum.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of go-phpchain.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-phpchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-phpchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-phpchain. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/phpchain/go-phpchain/params"
 )
 
 const (
@@ -43,7 +43,7 @@ func TestConsoleWelcome(t *testing.T) {
 	// Start a geth console, make sure it's cleaned up and terminate the console
 	geth := runGeth(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
-		"--etherbase", coinbase, "--shh",
+		"--phpbase", coinbase, "--shh",
 		"console")
 
 	// Gather all the infos the welcome message needs to contain
@@ -59,7 +59,7 @@ func TestConsoleWelcome(t *testing.T) {
 Welcome to the Geth JavaScript console!
 
 instance: Geth/v{{gethver}}/{{goos}}-{{goarch}}/{{gover}}
-coinbase: {{.Etherbase}}
+coinbase: {{.PHPbase}}
 at block: 0 ({{niltime}})
  datadir: {{.Datadir}}
  modules: {{apis}}
@@ -85,7 +85,7 @@ func TestIPCAttachWelcome(t *testing.T) {
 	// list of ipc modules and shh is included there.
 	geth := runGeth(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
-		"--etherbase", coinbase, "--shh", "--ipcpath", ipc)
+		"--phpbase", coinbase, "--shh", "--ipcpath", ipc)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
 	testAttachWelcome(t, geth, "ipc:"+ipc, ipcAPIs)
@@ -99,7 +99,7 @@ func TestHTTPAttachWelcome(t *testing.T) {
 	port := strconv.Itoa(trulyRandInt(1024, 65536)) // Yeah, sometimes this will fail, sorry :P
 	geth := runGeth(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
-		"--etherbase", coinbase, "--rpc", "--rpcport", port)
+		"--phpbase", coinbase, "--rpc", "--rpcport", port)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
 	testAttachWelcome(t, geth, "http://localhost:"+port, httpAPIs)
@@ -114,7 +114,7 @@ func TestWSAttachWelcome(t *testing.T) {
 
 	geth := runGeth(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
-		"--etherbase", coinbase, "--ws", "--wsport", port)
+		"--phpbase", coinbase, "--ws", "--wsport", port)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
 	testAttachWelcome(t, geth, "ws://localhost:"+port, httpAPIs)
@@ -134,7 +134,7 @@ func testAttachWelcome(t *testing.T, geth *testgeth, endpoint, apis string) {
 	attach.SetTemplateFunc("goarch", func() string { return runtime.GOARCH })
 	attach.SetTemplateFunc("gover", runtime.Version)
 	attach.SetTemplateFunc("gethver", func() string { return params.Version })
-	attach.SetTemplateFunc("etherbase", func() string { return geth.Etherbase })
+	attach.SetTemplateFunc("phpbase", func() string { return geth.PHPbase })
 	attach.SetTemplateFunc("niltime", func() string { return time.Unix(0, 0).Format(time.RFC1123) })
 	attach.SetTemplateFunc("ipc", func() bool { return strings.HasPrefix(endpoint, "ipc") })
 	attach.SetTemplateFunc("datadir", func() string { return geth.Datadir })
@@ -145,7 +145,7 @@ func testAttachWelcome(t *testing.T, geth *testgeth, endpoint, apis string) {
 Welcome to the Geth JavaScript console!
 
 instance: Geth/v{{gethver}}/{{goos}}-{{goarch}}/{{gover}}
-coinbase: {{etherbase}}
+coinbase: {{phpbase}}
 at block: 0 ({{niltime}}){{if ipc}}
  datadir: {{datadir}}{{end}}
  modules: {{apis}}

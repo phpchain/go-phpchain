@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of go-ethereum.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of go-phpchain.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-phpchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-phpchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-phpchain. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -25,10 +25,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/phpchain/go-phpchain/cmd/utils"
+	"github.com/phpchain/go-phpchain/consensus/ethash"
+	"github.com/phpchain/go-phpchain/eth"
+	"github.com/phpchain/go-phpchain/params"
 	"gopkg.in/urfave/cli.v1"
 )
 

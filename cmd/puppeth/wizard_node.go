@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of go-ethereum.
+// Copyright 2017 The go-phpchain Authors
+// This file is part of go-phpchain.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-phpchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-phpchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-phpchain. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/phpchain/go-phpchain/accounts/keystore"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/log"
 )
 
 // deployNode creates a new node configuration based on some user input.
@@ -48,9 +48,9 @@ func (w *wizard) deployNode(boot bool) {
 	infos, err := checkNode(client, w.network, boot)
 	if err != nil {
 		if boot {
-			infos = &nodeInfos{portFull: 30303, peersTotal: 512, peersLight: 256}
+			infos = &nodeInfos{portFull: 39595, peersTotal: 512, peersLight: 256}
 		} else {
-			infos = &nodeInfos{portFull: 30303, peersTotal: 50, peersLight: 0, gasTarget: 4.7, gasPrice: 18}
+			infos = &nodeInfos{portFull: 39595, peersTotal: 50, peersLight: 0, gasTarget: 4.7, gasPrice: 18}
 		}
 	}
 	infos.genesis, _ = json.MarshalIndent(w.conf.genesis, "", "  ")
@@ -92,19 +92,19 @@ func (w *wizard) deployNode(boot bool) {
 	// If the node is a miner/signer, load up needed credentials
 	if !boot {
 		if w.conf.genesis.Config.Ethash != nil {
-			// Ethash based miners only need an etherbase to mine against
+			// Ethash based miners only need an phpbase to mine against
 			fmt.Println()
-			if infos.etherbase == "" {
+			if infos.phpbase == "" {
 				fmt.Printf("What address should the miner user?\n")
 				for {
 					if address := w.readAddress(); address != nil {
-						infos.etherbase = address.Hex()
+						infos.phpbase = address.Hex()
 						break
 					}
 				}
 			} else {
-				fmt.Printf("What address should the miner user? (default = %s)\n", infos.etherbase)
-				infos.etherbase = w.readDefaultAddress(common.HexToAddress(infos.etherbase)).Hex()
+				fmt.Printf("What address should the miner user? (default = %s)\n", infos.phpbase)
+				infos.phpbase = w.readDefaultAddress(common.HexToAddress(infos.phpbase)).Hex()
 			}
 		} else if w.conf.genesis.Config.Clique != nil {
 			// If a previous signer was already set, offer to reuse it
@@ -146,7 +146,7 @@ func (w *wizard) deployNode(boot bool) {
 	}
 	// Try to deploy the full node on the host
 	if out, err := deployNode(client, w.network, w.conf.bootFull, w.conf.bootLight, infos); err != nil {
-		log.Error("Failed to deploy Ethereum node container", "err", err)
+		log.Error("Failed to deploy PHPChain node container", "err", err)
 		if len(out) > 0 {
 			fmt.Printf("%s\n", out)
 		}

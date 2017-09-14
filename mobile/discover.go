@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 // Contains all the wrappers from the accounts package to support client side enode
 // management on mobile platforms.
@@ -22,7 +22,7 @@ package geth
 import (
 	"errors"
 
-	"github.com/ethereum/go-ethereum/p2p/discv5"
+	"github.com/phpchain/go-phpchain/p2p/discv5"
 )
 
 // Enode represents a host on the network.
@@ -49,10 +49,10 @@ type Enode struct {
 // query parameter "discport".
 //
 // In the following example, the node URL describes
-// a node with IP address 10.3.58.6, TCP listening port 30303
-// and UDP discovery port 30301.
+// a node with IP address 10.3.58.6, TCP listening port 39595
+// and UDP discovery port 39591.
 //
-//    enode://<hex node id>@10.3.58.6:30303?discport=30301
+//    enode://<hex node id>@10.3.58.6:39595?discport=39591
 func NewEnode(rawurl string) (enode *Enode, _ error) {
 	node, err := discv5.ParseNode(rawurl)
 	if err != nil {

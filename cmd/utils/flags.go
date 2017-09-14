@@ -1,20 +1,20 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of go-ethereum.
+// Copyright 2015 The go-phpchain Authors
+// This file is part of go-phpchain.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-phpchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-phpchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-phpchain. If not, see <http://www.gnu.org/licenses/>.
 
-// Package utils contains internal helper functions for go-ethereum commands.
+// Package utils contains internal helper functions for go-phpchain commands.
 package utils
 
 import (
@@ -28,31 +28,31 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/accounts/keystore"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/eth/gasprice"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/ethstats"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/les"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/metrics"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/p2p/discover"
-	"github.com/ethereum/go-ethereum/p2p/discv5"
-	"github.com/ethereum/go-ethereum/p2p/nat"
-	"github.com/ethereum/go-ethereum/p2p/netutil"
-	"github.com/ethereum/go-ethereum/params"
-	whisper "github.com/ethereum/go-ethereum/whisper/whisperv5"
+	"github.com/phpchain/go-phpchain/accounts"
+	"github.com/phpchain/go-phpchain/accounts/keystore"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/consensus/ethash"
+	"github.com/phpchain/go-phpchain/core"
+	"github.com/phpchain/go-phpchain/core/state"
+	"github.com/phpchain/go-phpchain/core/vm"
+	"github.com/phpchain/go-phpchain/crypto"
+	"github.com/phpchain/go-phpchain/eth"
+	"github.com/phpchain/go-phpchain/eth/downloader"
+	"github.com/phpchain/go-phpchain/eth/gasprice"
+	"github.com/phpchain/go-phpchain/ethdb"
+	"github.com/phpchain/go-phpchain/ethstats"
+	"github.com/phpchain/go-phpchain/event"
+	"github.com/phpchain/go-phpchain/les"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/metrics"
+	"github.com/phpchain/go-phpchain/node"
+	"github.com/phpchain/go-phpchain/p2p"
+	"github.com/phpchain/go-phpchain/p2p/discover"
+	"github.com/phpchain/go-phpchain/p2p/discv5"
+	"github.com/phpchain/go-phpchain/p2p/nat"
+	"github.com/phpchain/go-phpchain/p2p/netutil"
+	"github.com/phpchain/go-phpchain/params"
+	whisper "github.com/phpchain/go-phpchain/whisper/whisperv5"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -274,8 +274,8 @@ var (
 		Usage: "Target gas limit sets the artificial target gas floor for the blocks to mine",
 		Value: params.GenesisGasLimit.Uint64(),
 	}
-	EtherbaseFlag = cli.StringFlag{
-		Name:  "etherbase",
+	PHPbaseFlag = cli.StringFlag{
+		Name:  "phpbase",
 		Usage: "Public address for block mining rewards (default = first account created)",
 		Value: "0",
 	}
@@ -401,7 +401,7 @@ var (
 	ListenPortFlag = cli.IntFlag{
 		Name:  "port",
 		Usage: "Network listening port",
-		Value: 30303,
+		Value: 39595,
 	}
 	BootnodesFlag = cli.StringFlag{
 		Name:  "bootnodes",
@@ -710,23 +710,23 @@ func MakeAddress(ks *keystore.KeyStore, account string) (accounts.Account, error
 	return accs[index], nil
 }
 
-// setEtherbase retrieves the etherbase either from the directly specified
+// setPHPbase retrieves the phpbase either from the directly specified
 // command line flags or from the keystore if CLI indexed.
-func setEtherbase(ctx *cli.Context, ks *keystore.KeyStore, cfg *eth.Config) {
-	if ctx.GlobalIsSet(EtherbaseFlag.Name) {
-		account, err := MakeAddress(ks, ctx.GlobalString(EtherbaseFlag.Name))
+func setPHPbase(ctx *cli.Context, ks *keystore.KeyStore, cfg *eth.Config) {
+	if ctx.GlobalIsSet(PHPbaseFlag.Name) {
+		account, err := MakeAddress(ks, ctx.GlobalString(PHPbaseFlag.Name))
 		if err != nil {
-			Fatalf("Option %q: %v", EtherbaseFlag.Name, err)
+			Fatalf("Option %q: %v", PHPbaseFlag.Name, err)
 		}
-		cfg.Etherbase = account.Address
+		cfg.PHPbase = account.Address
 		return
 	}
 	accounts := ks.Accounts()
-	if (cfg.Etherbase == common.Address{}) {
+	if (cfg.PHPbase == common.Address{}) {
 		if len(accounts) > 0 {
-			cfg.Etherbase = accounts[0].Address
+			cfg.PHPbase = accounts[0].Address
 		} else {
-			log.Warn("No etherbase set and no accounts found as default")
+			log.Warn("No phpbase set and no accounts found as default")
 		}
 	}
 }
@@ -807,7 +807,7 @@ func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 	case ctx.GlobalIsSet(DataDirFlag.Name):
 		cfg.DataDir = ctx.GlobalString(DataDirFlag.Name)
 	case ctx.GlobalBool(DevModeFlag.Name):
-		cfg.DataDir = filepath.Join(os.TempDir(), "ethereum_dev_mode")
+		cfg.DataDir = filepath.Join(os.TempDir(), "phpchain_dev_mode")
 	case ctx.GlobalBool(TestnetFlag.Name):
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet")
 	case ctx.GlobalBool(RinkebyFlag.Name):
@@ -911,7 +911,7 @@ func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *eth.Config) {
 	checkExclusive(ctx, FastSyncFlag, LightModeFlag, SyncModeFlag)
 
 	ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
-	setEtherbase(ctx, ks, cfg)
+	setPHPbase(ctx, ks, cfg)
 	setGPO(ctx, &cfg.GPO)
 	setTxPool(ctx, &cfg.TxPool)
 	setEthash(ctx, cfg)
@@ -934,8 +934,8 @@ func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *eth.Config) {
 		cfg.NetworkId = ctx.GlobalUint64(NetworkIdFlag.Name)
 	}
 
-	// Ethereum needs to know maxPeers to calculate the light server peer ratio.
-	// TODO(fjl): ensure Ethereum can get MaxPeers from node.
+	// PHPChain needs to know maxPeers to calculate the light server peer ratio.
+	// TODO(fjl): ensure PHPChain can get MaxPeers from node.
 	cfg.MaxPeers = ctx.GlobalInt(MaxPeersFlag.Name)
 
 	if ctx.GlobalIsSet(CacheFlag.Name) {
@@ -986,7 +986,7 @@ func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *eth.Config) {
 	}
 }
 
-// RegisterEthService adds an Ethereum client to the stack.
+// RegisterEthService adds an PHPChain client to the stack.
 func RegisterEthService(stack *node.Node, cfg *eth.Config) {
 	var err error
 	if cfg.SyncMode == downloader.LightSync {
@@ -1004,7 +1004,7 @@ func RegisterEthService(stack *node.Node, cfg *eth.Config) {
 		})
 	}
 	if err != nil {
-		Fatalf("Failed to register the Ethereum service: %v", err)
+		Fatalf("Failed to register the PHPChain service: %v", err)
 	}
 }
 
@@ -1017,20 +1017,20 @@ func RegisterShhService(stack *node.Node, cfg *whisper.Config) {
 	}
 }
 
-// RegisterEthStatsService configures the Ethereum Stats daemon and adds it to
+// RegisterEthStatsService configures the PHPChain Stats daemon and adds it to
 // th egiven node.
 func RegisterEthStatsService(stack *node.Node, url string) {
 	if err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
 		// Retrieve both eth and les services
-		var ethServ *eth.Ethereum
+		var ethServ *eth.PHPChain
 		ctx.Service(&ethServ)
 
-		var lesServ *les.LightEthereum
+		var lesServ *les.LightPHPChain
 		ctx.Service(&lesServ)
 
 		return ethstats.New(url, ethServ, lesServ)
 	}); err != nil {
-		Fatalf("Failed to register the Ethereum Stats service: %v", err)
+		Fatalf("Failed to register the PHPChain Stats service: %v", err)
 	}
 }
 

@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2016 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 package light
 
@@ -24,19 +24,19 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/trie"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/common/math"
+	"github.com/phpchain/go-phpchain/consensus/ethash"
+	"github.com/phpchain/go-phpchain/core"
+	"github.com/phpchain/go-phpchain/core/state"
+	"github.com/phpchain/go-phpchain/core/types"
+	"github.com/phpchain/go-phpchain/core/vm"
+	"github.com/phpchain/go-phpchain/crypto"
+	"github.com/phpchain/go-phpchain/ethdb"
+	"github.com/phpchain/go-phpchain/event"
+	"github.com/phpchain/go-phpchain/params"
+	"github.com/phpchain/go-phpchain/rlp"
+	"github.com/phpchain/go-phpchain/trie"
 )
 
 var (
@@ -194,11 +194,11 @@ func testChainGen(i int, block *core.BlockGen) {
 	signer := types.HomesteadSigner{}
 	switch i {
 	case 0:
-		// In block 1, the test bank sends account #1 some ether.
+		// In block 1, the test bank sends account #1 some php.
 		tx, _ := types.SignTx(types.NewTransaction(block.TxNonce(testBankAddress), acc1Addr, big.NewInt(10000), bigTxGas, nil, nil), signer, testBankKey)
 		block.AddTx(tx)
 	case 1:
-		// In block 2, the test bank sends some more ether to account #1.
+		// In block 2, the test bank sends some more php to account #1.
 		// acc1Addr passes it on to account #2.
 		// acc1Addr creates a test contract.
 		tx1, _ := types.SignTx(types.NewTransaction(block.TxNonce(testBankAddress), acc1Addr, big.NewInt(1000), bigTxGas, nil, nil), signer, testBankKey)

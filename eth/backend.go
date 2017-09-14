@@ -1,20 +1,20 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2014 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package eth implements the Ethereum protocol.
+// Package eth implements the PHPChain protocol.
 package eth
 
 import (
@@ -25,28 +25,28 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/consensus/clique"
-	"github.com/ethereum/go-ethereum/consensus/ethash"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/eth/downloader"
-	"github.com/ethereum/go-ethereum/eth/filters"
-	"github.com/ethereum/go-ethereum/eth/gasprice"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/internal/ethapi"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/miner"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/p2p"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/phpchain/go-phpchain/accounts"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/common/hexutil"
+	"github.com/phpchain/go-phpchain/consensus"
+	"github.com/phpchain/go-phpchain/consensus/clique"
+	"github.com/phpchain/go-phpchain/consensus/ethash"
+	"github.com/phpchain/go-phpchain/core"
+	"github.com/phpchain/go-phpchain/core/types"
+	"github.com/phpchain/go-phpchain/core/vm"
+	"github.com/phpchain/go-phpchain/eth/downloader"
+	"github.com/phpchain/go-phpchain/eth/filters"
+	"github.com/phpchain/go-phpchain/eth/gasprice"
+	"github.com/phpchain/go-phpchain/ethdb"
+	"github.com/phpchain/go-phpchain/event"
+	"github.com/phpchain/go-phpchain/internal/ethapi"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/miner"
+	"github.com/phpchain/go-phpchain/node"
+	"github.com/phpchain/go-phpchain/p2p"
+	"github.com/phpchain/go-phpchain/params"
+	"github.com/phpchain/go-phpchain/rlp"
+	"github.com/phpchain/go-phpchain/rpc"
 )
 
 type LesServer interface {
@@ -55,11 +55,11 @@ type LesServer interface {
 	Protocols() []p2p.Protocol
 }
 
-// Ethereum implements the Ethereum full node service.
-type Ethereum struct {
+// PHPChain implements the PHPChain full node service.
+type PHPChain struct {
 	chainConfig *params.ChainConfig
 	// Channel for shutting down the service
-	shutdownChan  chan bool // Channel for shutting down the ethereum
+	shutdownChan  chan bool // Channel for shutting down the phpchain
 	stopDbUpgrade func()    // stop chain db sequential key upgrade
 	// Handlers
 	txPool          *core.TxPool
@@ -77,23 +77,23 @@ type Ethereum struct {
 
 	miner     *miner.Miner
 	gasPrice  *big.Int
-	etherbase common.Address
+	phpbase common.Address
 
 	networkId     uint64
 	netRPCService *ethapi.PublicNetAPI
 
-	lock sync.RWMutex // Protects the variadic fields (e.g. gas price and etherbase)
+	lock sync.RWMutex // Protects the variadic fields (e.g. gas price and phpbase)
 }
 
-func (s *Ethereum) AddLesServer(ls LesServer) {
+func (s *PHPChain) AddLesServer(ls LesServer) {
 	s.lesServer = ls
 }
 
-// New creates a new Ethereum object (including the
-// initialisation of the common Ethereum object)
-func New(ctx *node.ServiceContext, config *Config) (*Ethereum, error) {
+// New creates a new PHPChain object (including the
+// initialisation of the common PHPChain object)
+func New(ctx *node.ServiceContext, config *Config) (*PHPChain, error) {
 	if config.SyncMode == downloader.LightSync {
-		return nil, errors.New("can't run eth.Ethereum in light sync mode, use les.LightEthereum")
+		return nil, errors.New("can't run eth.PHPChain in light sync mode, use les.LightPHPChain")
 	}
 	if !config.SyncMode.IsValid() {
 		return nil, fmt.Errorf("invalid sync mode %d", config.SyncMode)
@@ -110,7 +110,7 @@ func New(ctx *node.ServiceContext, config *Config) (*Ethereum, error) {
 	}
 	log.Info("Initialised chain configuration", "config", chainConfig)
 
-	eth := &Ethereum{
+	eth := &PHPChain{
 		chainDb:        chainDb,
 		chainConfig:    chainConfig,
 		eventMux:       ctx.EventMux,
@@ -120,13 +120,13 @@ func New(ctx *node.ServiceContext, config *Config) (*Ethereum, error) {
 		stopDbUpgrade:  stopDbUpgrade,
 		networkId:      config.NetworkId,
 		gasPrice:       config.GasPrice,
-		etherbase:      config.Etherbase,
+		phpbase:      config.PHPbase,
 	}
 
 	if err := addMipmapBloomBins(chainDb); err != nil {
 		return nil, err
 	}
-	log.Info("Initialising Ethereum protocol", "versions", ProtocolVersions, "network", config.NetworkId)
+	log.Info("Initialising PHPChain protocol", "versions", ProtocolVersions, "network", config.NetworkId)
 
 	if !config.SkipBcVersionCheck {
 		bcVersion := core.GetBlockChainVersion(chainDb)
@@ -208,7 +208,7 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (ethdb.Data
 	return db, nil
 }
 
-// CreateConsensusEngine creates the required type of consensus engine instance for an Ethereum service
+// CreateConsensusEngine creates the required type of consensus engine instance for an PHPChain service
 func CreateConsensusEngine(ctx *node.ServiceContext, config *Config, chainConfig *params.ChainConfig, db ethdb.Database) consensus.Engine {
 	// If proof-of-authority is requested, set it up
 	if chainConfig.Clique != nil {
@@ -233,9 +233,9 @@ func CreateConsensusEngine(ctx *node.ServiceContext, config *Config, chainConfig
 	}
 }
 
-// APIs returns the collection of RPC services the ethereum package offers.
+// APIs returns the collection of RPC services the phpchain package offers.
 // NOTE, some of these services probably need to be moved to somewhere else.
-func (s *Ethereum) APIs() []rpc.API {
+func (s *PHPChain) APIs() []rpc.API {
 	apis := ethapi.GetAPIs(s.ApiBackend)
 
 	// Append any APIs exposed explicitly by the consensus engine
@@ -246,7 +246,7 @@ func (s *Ethereum) APIs() []rpc.API {
 		{
 			Namespace: "eth",
 			Version:   "1.0",
-			Service:   NewPublicEthereumAPI(s),
+			Service:   NewPublicPHPChainAPI(s),
 			Public:    true,
 		}, {
 			Namespace: "eth",
@@ -290,45 +290,45 @@ func (s *Ethereum) APIs() []rpc.API {
 	}...)
 }
 
-func (s *Ethereum) ResetWithGenesisBlock(gb *types.Block) {
+func (s *PHPChain) ResetWithGenesisBlock(gb *types.Block) {
 	s.blockchain.ResetWithGenesisBlock(gb)
 }
 
-func (s *Ethereum) Etherbase() (eb common.Address, err error) {
+func (s *PHPChain) PHPbase() (eb common.Address, err error) {
 	s.lock.RLock()
-	etherbase := s.etherbase
+	phpbase := s.phpbase
 	s.lock.RUnlock()
 
-	if etherbase != (common.Address{}) {
-		return etherbase, nil
+	if phpbase != (common.Address{}) {
+		return phpbase, nil
 	}
 	if wallets := s.AccountManager().Wallets(); len(wallets) > 0 {
 		if accounts := wallets[0].Accounts(); len(accounts) > 0 {
 			return accounts[0].Address, nil
 		}
 	}
-	return common.Address{}, fmt.Errorf("etherbase address must be explicitly specified")
+	return common.Address{}, fmt.Errorf("phpbase address must be explicitly specified")
 }
 
 // set in js console via admin interface or wrapper from cli flags
-func (self *Ethereum) SetEtherbase(etherbase common.Address) {
+func (self *PHPChain) SetPHPbase(phpbase common.Address) {
 	self.lock.Lock()
-	self.etherbase = etherbase
+	self.phpbase = phpbase
 	self.lock.Unlock()
 
-	self.miner.SetEtherbase(etherbase)
+	self.miner.SetPHPbase(phpbase)
 }
 
-func (s *Ethereum) StartMining(local bool) error {
-	eb, err := s.Etherbase()
+func (s *PHPChain) StartMining(local bool) error {
+	eb, err := s.PHPbase()
 	if err != nil {
-		log.Error("Cannot start mining without etherbase", "err", err)
-		return fmt.Errorf("etherbase missing: %v", err)
+		log.Error("Cannot start mining without phpbase", "err", err)
+		return fmt.Errorf("phpbase missing: %v", err)
 	}
 	if clique, ok := s.engine.(*clique.Clique); ok {
 		wallet, err := s.accountManager.Find(accounts.Account{Address: eb})
 		if wallet == nil || err != nil {
-			log.Error("Etherbase account unavailable locally", "err", err)
+			log.Error("PHPbase account unavailable locally", "err", err)
 			return fmt.Errorf("singer missing: %v", err)
 		}
 		clique.Authorize(eb, wallet.SignHash)
@@ -344,24 +344,24 @@ func (s *Ethereum) StartMining(local bool) error {
 	return nil
 }
 
-func (s *Ethereum) StopMining()         { s.miner.Stop() }
-func (s *Ethereum) IsMining() bool      { return s.miner.Mining() }
-func (s *Ethereum) Miner() *miner.Miner { return s.miner }
+func (s *PHPChain) StopMining()         { s.miner.Stop() }
+func (s *PHPChain) IsMining() bool      { return s.miner.Mining() }
+func (s *PHPChain) Miner() *miner.Miner { return s.miner }
 
-func (s *Ethereum) AccountManager() *accounts.Manager  { return s.accountManager }
-func (s *Ethereum) BlockChain() *core.BlockChain       { return s.blockchain }
-func (s *Ethereum) TxPool() *core.TxPool               { return s.txPool }
-func (s *Ethereum) EventMux() *event.TypeMux           { return s.eventMux }
-func (s *Ethereum) Engine() consensus.Engine           { return s.engine }
-func (s *Ethereum) ChainDb() ethdb.Database            { return s.chainDb }
-func (s *Ethereum) IsListening() bool                  { return true } // Always listening
-func (s *Ethereum) EthVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
-func (s *Ethereum) NetVersion() uint64                 { return s.networkId }
-func (s *Ethereum) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
+func (s *PHPChain) AccountManager() *accounts.Manager  { return s.accountManager }
+func (s *PHPChain) BlockChain() *core.BlockChain       { return s.blockchain }
+func (s *PHPChain) TxPool() *core.TxPool               { return s.txPool }
+func (s *PHPChain) EventMux() *event.TypeMux           { return s.eventMux }
+func (s *PHPChain) Engine() consensus.Engine           { return s.engine }
+func (s *PHPChain) ChainDb() ethdb.Database            { return s.chainDb }
+func (s *PHPChain) IsListening() bool                  { return true } // Always listening
+func (s *PHPChain) EthVersion() int                    { return int(s.protocolManager.SubProtocols[0].Version) }
+func (s *PHPChain) NetVersion() uint64                 { return s.networkId }
+func (s *PHPChain) Downloader() *downloader.Downloader { return s.protocolManager.downloader }
 
 // Protocols implements node.Service, returning all the currently configured
 // network protocols to start.
-func (s *Ethereum) Protocols() []p2p.Protocol {
+func (s *PHPChain) Protocols() []p2p.Protocol {
 	if s.lesServer == nil {
 		return s.protocolManager.SubProtocols
 	} else {
@@ -370,8 +370,8 @@ func (s *Ethereum) Protocols() []p2p.Protocol {
 }
 
 // Start implements node.Service, starting all internal goroutines needed by the
-// Ethereum protocol implementation.
-func (s *Ethereum) Start(srvr *p2p.Server) error {
+// PHPChain protocol implementation.
+func (s *PHPChain) Start(srvr *p2p.Server) error {
 	s.netRPCService = ethapi.NewPublicNetAPI(srvr, s.NetVersion())
 
 	s.protocolManager.Start()
@@ -382,8 +382,8 @@ func (s *Ethereum) Start(srvr *p2p.Server) error {
 }
 
 // Stop implements node.Service, terminating all internal goroutines used by the
-// Ethereum protocol.
-func (s *Ethereum) Stop() error {
+// PHPChain protocol.
+func (s *PHPChain) Stop() error {
 	if s.stopDbUpgrade != nil {
 		s.stopDbUpgrade()
 	}

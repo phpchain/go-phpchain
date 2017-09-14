@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// Copyright 2017 The go-phpchain Authors
+// This file is part of the go-phpchain library.
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
+// The go-phpchain library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
+// The go-phpchain library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-phpchain library. If not, see <http://www.gnu.org/licenses/>.
 
 // This file contains the implementation for interacting with the Ledger hardware
 // wallets. The wire protocol spec can be found in the Ledger Blue GitHub repo:
@@ -31,13 +31,13 @@ import (
 	"sync"
 	"time"
 
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/rlp"
+	phpchain "github.com/phpchain/go-phpchain"
+	"github.com/phpchain/go-phpchain/accounts"
+	"github.com/phpchain/go-phpchain/common"
+	"github.com/phpchain/go-phpchain/common/hexutil"
+	"github.com/phpchain/go-phpchain/core/types"
+	"github.com/phpchain/go-phpchain/log"
+	"github.com/phpchain/go-phpchain/rlp"
 	"github.com/karalabe/hid"
 )
 
@@ -60,8 +60,8 @@ type ledgerParam1 byte
 type ledgerParam2 byte
 
 const (
-	ledgerOpRetrieveAddress  ledgerOpcode = 0x02 // Returns the public key and Ethereum address for a given BIP 32 path
-	ledgerOpSignTransaction  ledgerOpcode = 0x04 // Signs an Ethereum transaction after having the user validate the parameters
+	ledgerOpRetrieveAddress  ledgerOpcode = 0x02 // Returns the public key and PHPChain address for a given BIP 32 path
+	ledgerOpSignTransaction  ledgerOpcode = 0x04 // Signs an PHPChain transaction after having the user validate the parameters
 	ledgerOpGetConfiguration ledgerOpcode = 0x06 // Returns specific wallet application configuration
 
 	ledgerP1DirectlyFetchAddress    ledgerParam1 = 0x00 // Return address directly from the wallet
@@ -90,14 +90,14 @@ type ledgerWallet struct {
 	device  *hid.Device    // USB device advertising itself as a Ledger wallet
 	failure error          // Any failure that would make the device unusable
 
-	version  [3]byte                                    // Current version of the Ledger Ethereum app (zero if app is offline)
+	version  [3]byte                                    // Current version of the Ledger PHPChain app (zero if app is offline)
 	browser  bool                                       // Flag whether the Ledger is in browser mode (reply channel mismatch)
 	accounts []accounts.Account                         // List of derive accounts pinned on the Ledger
 	paths    map[common.Address]accounts.DerivationPath // Known derivation paths for signing operations
 
 	deriveNextPath accounts.DerivationPath   // Next derivation path for account auto-discovery
 	deriveNextAddr common.Address            // Next derived account address for auto-discovery
-	deriveChain    ethereum.ChainStateReader // Blockchain state reader to discover used account with
+	deriveChain    phpchain.ChainStateReader // Blockchain state reader to discover used account with
 	deriveReq      chan chan struct{}        // Channel to request a self-derivation on
 	deriveQuit     chan chan error           // Channel to terminate the self-deriver with
 
@@ -134,7 +134,7 @@ func (w *ledgerWallet) URL() accounts.URL {
 }
 
 // Status implements accounts.Wallet, always whether the Ledger is opened, closed
-// or whether the Ethereum app was not started on it.
+// or whether the PHPChain app was not started on it.
 func (w *ledgerWallet) Status() string {
 	w.stateLock.RLock() // No device communication, state lock is enough
 	defer w.stateLock.RUnlock()
@@ -146,15 +146,15 @@ func (w *ledgerWallet) Status() string {
 		return "Closed"
 	}
 	if w.browser {
-		return "Ethereum app in browser mode"
+		return "PHPChain app in browser mode"
 	}
 	if w.offline() {
-		return "Ethereum app offline"
+		return "PHPChain app offline"
 	}
-	return fmt.Sprintf("Ethereum app v%d.%d.%d online", w.version[0], w.version[1], w.version[2])
+	return fmt.Sprintf("PHPChain app v%d.%d.%d online", w.version[0], w.version[1], w.version[2])
 }
 
-// offline returns whether the wallet and the Ethereum app is offline or not.
+// offline returns whether the wallet and the PHPChain app is offline or not.
 //
 // The method assumes that the state lock is held!
 func (w *ledgerWallet) offline() bool {
@@ -188,7 +188,7 @@ func (w *ledgerWallet) Open(passphrase string) error {
 	if err != nil {
 		return err
 	}
-	// Wallet seems to be successfully opened, guess if the Ethereum app is running
+	// Wallet seems to be successfully opened, guess if the PHPChain app is running
 	w.device = device
 	w.commsLock = make(chan struct{}, 1)
 	w.commsLock <- struct{}{} // Enable lock
@@ -205,13 +205,13 @@ func (w *ledgerWallet) Open(passphrase string) error {
 	}()
 
 	if _, err = w.ledgerDerive(accounts.DefaultBaseDerivationPath); err != nil {
-		// Ethereum app is not running or in browser mode, nothing more to do, return
+		// PHPChain app is not running or in browser mode, nothing more to do, return
 		if err == errReplyInvalidHeader {
 			w.browser = true
 		}
 		return nil
 	}
-	// Try to resolve the Ethereum app's version, will fail prior to v1.0.2
+	// Try to resolve the PHPChain app's version, will fail prior to v1.0.2
 	if w.version, err = w.ledgerVersion(); err != nil {
 		w.version = [3]byte{1, 0, 0} // Assume worst case, can't verify if v1.0.0 or v1.0.1
 	}
@@ -394,7 +394,7 @@ func (w *ledgerWallet) selfDerive() {
 			context = context.Background()
 		)
 		for empty := false; !empty; {
-			// Retrieve the next derived Ethereum account
+			// Retrieve the next derived PHPChain account
 			if nextAddr == (common.Address{}) {
 				if nextAddr, err = w.ledgerDerive(nextPath); err != nil {
 					w.log.Warn("Ledger account derivation failed", "err", err)
@@ -532,7 +532,7 @@ func (w *ledgerWallet) Derive(path accounts.DerivationPath, pin bool) (accounts.
 // user used previously (based on the chain state), but ones that he/she did not
 // explicitly pin to the wallet manually. To avoid chain head monitoring, self
 // derivation only runs during account listing (and even then throttled).
-func (w *ledgerWallet) SelfDerive(base accounts.DerivationPath, chain ethereum.ChainStateReader) {
+func (w *ledgerWallet) SelfDerive(base accounts.DerivationPath, chain phpchain.ChainStateReader) {
 	w.stateLock.Lock()
 	defer w.stateLock.Unlock()
 
@@ -553,14 +553,14 @@ func (w *ledgerWallet) SignHash(acc accounts.Account, hash []byte) ([]byte, erro
 // wallet to request a confirmation from the user. It returns either the signed
 // transaction or a failure if the user denied the transaction.
 //
-// Note, if the version of the Ethereum application running on the Ledger wallet is
+// Note, if the version of the PHPChain application running on the Ledger wallet is
 // too old to sign EIP-155 transactions, but such is requested nonetheless, an error
 // will be returned opposed to silently signing in Homestead mode.
 func (w *ledgerWallet) SignTx(account accounts.Account, tx *types.Transaction, chainID *big.Int) (*types.Transaction, error) {
 	w.stateLock.RLock() // Comms have own mutex, this is for the state fields
 	defer w.stateLock.RUnlock()
 
-	// If the wallet is closed, or the Ethereum app doesn't run, abort
+	// If the wallet is closed, or the PHPChain app doesn't run, abort
 	if w.device == nil || w.offline() {
 		return nil, accounts.ErrWalletClosed
 	}
@@ -605,7 +605,7 @@ func (w *ledgerWallet) SignTxWithPassphrase(account accounts.Account, passphrase
 	return w.SignTx(account, tx, chainID)
 }
 
-// ledgerVersion retrieves the current version of the Ethereum wallet app running
+// ledgerVersion retrieves the current version of the PHPChain wallet app running
 // on the Ledger wallet.
 //
 // The version retrieval protocol is defined as follows:
@@ -637,7 +637,7 @@ func (w *ledgerWallet) ledgerVersion() ([3]byte, error) {
 	return version, nil
 }
 
-// ledgerDerive retrieves the currently active Ethereum address from a Ledger
+// ledgerDerive retrieves the currently active PHPChain address from a Ledger
 // wallet at the specified derivation path.
 //
 // The address derivation protocol is defined as follows:
@@ -665,8 +665,8 @@ func (w *ledgerWallet) ledgerVersion() ([3]byte, error) {
 //   ------------------------+-------------------
 //   Public Key length       | 1 byte
 //   Uncompressed Public Key | arbitrary
-//   Ethereum address length | 1 byte
-//   Ethereum address        | 40 bytes hex ascii
+//   PHPChain address length | 1 byte
+//   PHPChain address        | 40 bytes hex ascii
 //   Chain code if requested | 32 bytes
 func (w *ledgerWallet) ledgerDerive(derivationPath []uint32) (common.Address, error) {
 	// Flatten the derivation path into the Ledger request
@@ -686,13 +686,13 @@ func (w *ledgerWallet) ledgerDerive(derivationPath []uint32) (common.Address, er
 	}
 	reply = reply[1+int(reply[0]):]
 
-	// Extract the Ethereum hex address string
+	// Extract the PHPChain hex address string
 	if len(reply) < 1 || len(reply) < 1+int(reply[0]) {
 		return common.Address{}, errors.New("reply lacks address entry")
 	}
 	hexstr := reply[1 : 1+int(reply[0])]
 
-	// Decode the hex sting into an Ethereum address and return
+	// Decode the hex sting into an PHPChain address and return
 	var address common.Address
 	hex.Decode(address[:], hexstr)
 	return address, nil
@@ -775,7 +775,7 @@ func (w *ledgerWallet) ledgerSign(derivationPath []uint32, address common.Addres
 		payload = payload[chunk:]
 		op = ledgerP1ContTransactionData
 	}
-	// Extract the Ethereum signature and do a sanity validation
+	// Extract the PHPChain signature and do a sanity validation
 	if len(reply) != 65 {
 		return nil, errors.New("reply lacks signature")
 	}

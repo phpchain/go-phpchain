@@ -1,5 +1,5 @@
 language: go
-go_import_path: github.com/ethereum/go-ethereum
+go_import_path: github.com/phpchain/go-phpchain
 sudo: false
 matrix:
   include:
@@ -56,7 +56,7 @@ matrix:
             - fakeroot
       script:
         # Build for the primary platforms that Trusty can manage
-        - go run build/ci.go debsrc -signer "Go Ethereum Linux Builder <geth-ci@ethereum.org>" -upload ppa:ethereum/ethereum
+        - go run build/ci.go debsrc -signer "Go PHPChain Linux Builder <geth-ci@phpchain.org>" -upload ppa:phpchain/phpchain
         - go run build/ci.go install
         - go run build/ci.go archive -type tar -signer LINUX_SIGNING_KEY -upload gethstore/builds
         - go run build/ci.go install -arch 386
@@ -132,8 +132,8 @@ matrix:
         - mv android-ndk-r14b $HOME
         - export ANDROID_NDK=$HOME/android-ndk-r14b
 
-        - mkdir -p $GOPATH/src/github.com/ethereum
-        - ln -s `pwd` $GOPATH/src/github.com/ethereum
+        - mkdir -p $GOPATH/src/github.com/phpchain
+        - ln -s `pwd` $GOPATH/src/github.com/phpchain
         - go run build/ci.go aar -signer ANDROID_SIGNING_KEY -deploy https://oss.sonatype.org -upload gethstore/builds
 
     # This builder does the OSX Azure, iOS CocoaPods and iOS Azure uploads

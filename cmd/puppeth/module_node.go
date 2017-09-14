@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of go-ethereum.
+// Copyright 2017 The go-phpchain Authors
+// This file is part of go-phpchain.
 //
-// go-ethereum is free software: you can redistribute it and/or modify
+// go-phpchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-ethereum is distributed in the hope that it will be useful,
+// go-phpchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+// along with go-phpchain. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -25,12 +25,12 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/phpchain/go-phpchain/log"
 )
 
-// nodeDockerfile is the Dockerfile required to run an Ethereum node.
+// nodeDockerfile is the Dockerfile required to run an PHPChain node.
 var nodeDockerfile = `
-FROM ethereum/client-go:alpine-develop
+FROM phpchain/client-go:alpine-develop
 
 ADD genesis.json /genesis.json
 {{if .Unlock}}
@@ -39,14 +39,14 @@ ADD genesis.json /genesis.json
 {{end}}
 RUN \
   echo '/geth init /genesis.json' > geth.sh && \{{if .Unlock}}
-	echo 'mkdir -p /root/.ethereum/keystore/ && cp /signer.json /root/.ethereum/keystore/' >> geth.sh && \{{end}}
-	echo $'/geth --networkid {{.NetworkID}} --cache 512 --port {{.Port}} --maxpeers {{.Peers}} {{.LightFlag}} --ethstats \'{{.Ethstats}}\' {{if .BootV4}}--bootnodesv4 {{.BootV4}}{{end}} {{if .BootV5}}--bootnodesv5 {{.BootV5}}{{end}} {{if .Etherbase}}--etherbase {{.Etherbase}} --mine{{end}}{{if .Unlock}}--unlock 0 --password /signer.pass --mine{{end}} --targetgaslimit {{.GasTarget}} --gasprice {{.GasPrice}}' >> geth.sh
+	echo 'mkdir -p /root/.phpchain/keystore/ && cp /signer.json /root/.phpchain/keystore/' >> geth.sh && \{{end}}
+	echo $'/geth --networkid {{.NetworkID}} --cache 512 --port {{.Port}} --maxpeers {{.Peers}} {{.LightFlag}} --ethstats \'{{.Ethstats}}\' {{if .BootV4}}--bootnodesv4 {{.BootV4}}{{end}} {{if .BootV5}}--bootnodesv5 {{.BootV5}}{{end}} {{if .PHPbase}}--phpbase {{.PHPbase}} --mine{{end}}{{if .Unlock}}--unlock 0 --password /signer.pass --mine{{end}} --targetgaslimit {{.GasTarget}} --gasprice {{.GasPrice}}' >> geth.sh
 
 ENTRYPOINT ["/bin/sh", "geth.sh"]
 `
 
 // nodeComposefile is the docker-compose.yml file required to deploy and maintain
-// an Ethereum node (bootnode or miner for now).
+// an PHPChain node (bootnode or miner for now).
 var nodeComposefile = `
 version: '2'
 services:
@@ -58,25 +58,25 @@ services:
       - "{{.FullPort}}:{{.FullPort}}/udp"{{if .Light}}
       - "{{.LightPort}}:{{.LightPort}}/udp"{{end}}
     volumes:
-      - {{.Datadir}}:/root/.ethereum
+      - {{.Datadir}}:/root/.phpchain
     environment:
       - FULL_PORT={{.FullPort}}/tcp
       - LIGHT_PORT={{.LightPort}}/udp
       - TOTAL_PEERS={{.TotalPeers}}
       - LIGHT_PEERS={{.LightPeers}}
       - STATS_NAME={{.Ethstats}}
-      - MINER_NAME={{.Etherbase}}
+      - MINER_NAME={{.PHPbase}}
       - GAS_TARGET={{.GasTarget}}
       - GAS_PRICE={{.GasPrice}}
     restart: always
 `
 
-// deployNode deploys a new Ethereum node container to a remote machine via SSH,
+// deployNode deploys a new PHPChain node container to a remote machine via SSH,
 // docker and docker-compose. If an instance with the specified network name
 // already exists there, it will be overwritten!
 func deployNode(client *sshClient, network string, bootv4, bootv5 []string, config *nodeInfos) ([]byte, error) {
 	kind := "sealnode"
-	if config.keyJSON == "" && config.etherbase == "" {
+	if config.keyJSON == "" && config.phpbase == "" {
 		kind = "bootnode"
 		bootv4 = make([]string, 0)
 		bootv5 = make([]string, 0)
@@ -98,7 +98,7 @@ func deployNode(client *sshClient, network string, bootv4, bootv5 []string, conf
 		"BootV4":    strings.Join(bootv4, ","),
 		"BootV5":    strings.Join(bootv5, ","),
 		"Ethstats":  config.ethstats,
-		"Etherbase": config.etherbase,
+		"PHPbase": config.phpbase,
 		"GasTarget": uint64(1000000 * config.gasTarget),
 		"GasPrice":  uint64(1000000000 * config.gasPrice),
 		"Unlock":    config.keyJSON != "",
@@ -116,7 +116,7 @@ func deployNode(client *sshClient, network string, bootv4, bootv5 []string, conf
 		"LightPort":  config.portFull + 1,
 		"LightPeers": config.peersLight,
 		"Ethstats":   config.ethstats[:strings.Index(config.ethstats, ":")],
-		"Etherbase":  config.etherbase,
+		"PHPbase":  config.phpbase,
 		"GasTarget":  config.gasTarget,
 		"GasPrice":   config.gasPrice,
 	})
@@ -152,7 +152,7 @@ type nodeInfos struct {
 	enodeLight string
 	peersTotal int
 	peersLight int
-	etherbase  string
+	phpbase  string
 	keyJSON    string
 	keyPass    string
 	gasTarget  float64
@@ -217,13 +217,13 @@ func checkNode(client *sshClient, network string, boot bool) (*nodeInfos, error)
 	// Assemble and return the useful infos
 	stats := &nodeInfos{
 		genesis:    genesis,
-		datadir:    infos.volumes["/root/.ethereum"],
+		datadir:    infos.volumes["/root/.phpchain"],
 		portFull:   infos.portmap[infos.envvars["FULL_PORT"]],
 		portLight:  infos.portmap[infos.envvars["LIGHT_PORT"]],
 		peersTotal: totalPeers,
 		peersLight: lightPeers,
 		ethstats:   infos.envvars["STATS_NAME"],
-		etherbase:  infos.envvars["MINER_NAME"],
+		phpbase:  infos.envvars["MINER_NAME"],
 		keyJSON:    keyJSON,
 		keyPass:    keyPass,
 		gasTarget:  gasTarget,

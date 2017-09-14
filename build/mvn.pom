@@ -4,14 +4,14 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.ethereum</groupId>
+  <groupId>org.phpchain</groupId>
   <artifactId>geth</artifactId>
   <version>{{.Version}}</version>
   <packaging>aar</packaging>
 
-  <name>Android Ethereum Client</name>
-  <description>Android port of the go-ethereum libraries and node</description>
-  <url>https://github.com/ethereum/go-ethereum</url>
+  <name>Android PHPChain Client</name>
+  <description>Android port of the go-phpchain libraries and node</description>
+  <url>https://github.com/phpchain/go-phpchain</url>
   <inceptionYear>2015</inceptionYear>
 
   <licenses>
@@ -23,8 +23,8 @@
   </licenses>
 
   <organization>
-    <name>Ethereum</name>
-    <url>https://ethereum.org</url>
+    <name>PHPChain</name>
+    <url>https://phpchain.org</url>
   </organization>
 
   <developers>
@@ -48,10 +48,10 @@
 
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/ethereum/go-ethereum/issues/</url>
+    <url>https://github.com/phpchain/go-phpchain/issues/</url>
   </issueManagement>
 
   <scm>
-    <url>https://github.com/ethereum/go-ethereum</url>
+    <url>https://github.com/phpchain/go-phpchain</url>
   </scm>
 </project>
