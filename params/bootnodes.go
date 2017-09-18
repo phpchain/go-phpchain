@@ -28,7 +28,7 @@ var MainnetBootnodes = []string{
 
 	//// PHPChain Foundation Cpp Bootnodes
 	//"enode://979b7fa28feeb35a4741660a16076f1943202cb72b6af70d327f053e248bab9ba81760f39d0701ef1d8f89cc1fbd2cacba0710a12cd5314d5e0c9021aa3637f9@5.1.83.226:30303", // DE
-	"enode://bb6286e26e523784f66e3aea96025b539fc79932af61d1cb77ea4ebe6dc70b922e5479279f330c8b47940b4d995967dfa5e1e46840b0827eb5ce150e121e64a0@154.16.199.165:39595",
+	//"enode://bb6286e26e523784f66e3aea96025b539fc79932af61d1cb77ea4ebe6dc70b922e5479279f330c8b47940b4d995967dfa5e1e46840b0827eb5ce150e121e64a0@154.16.199.165:39595",
 }
 
 // TestnetBootnodes are the enode URLs of the P2P bootstrap nodes running on the
